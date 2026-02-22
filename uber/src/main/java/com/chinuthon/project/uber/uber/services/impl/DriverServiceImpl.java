@@ -7,7 +7,7 @@ import com.chinuthon.project.uber.uber.services.DriverService;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service
+//@Service
 public class DriverServiceImpl implements DriverService {
     @Override
     public RiderDto acceptRide(Long rideId) {

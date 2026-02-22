@@ -9,6 +9,7 @@ import com.chinuthon.project.uber.uber.exceptions.RuntimeConflictException;
 import com.chinuthon.project.uber.uber.repositories.UserRepository;
 import com.chinuthon.project.uber.uber.services.AuthService;
 import com.chinuthon.project.uber.uber.services.RiderService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserDto signup(SignupDto signupDto) {
-        User user = userRepository.
-                    findByEmail(signupDto.getEmail()).
-                    orElseThrow(()-> new RuntimeConflictException("User with email already exists"));
+        User user = userRepository.findByEmail(signupDto.getEmail()).orElse(null);
+
+        if (user != null) {
+            throw new RuntimeConflictException(
+                    "Cannot Signup,User with email " + signupDto.getEmail() + " already exists");
+        }
 
         // Mapping SignupDto to User Entity
         User mappedUser = modelMapper.map(signupDto, User.class);
@@ -43,8 +48,7 @@ public class AuthServiceImpl implements AuthService {
 
         // TODO Add the wallet related servie here
 
-
-        return null;
+        return modelMapper.map(savedUser, UserDto.class);
     }
 
     @Override
