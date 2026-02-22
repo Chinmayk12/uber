@@ -7,12 +7,16 @@ import org.geolatte.geom.Point;
 
 import java.time.LocalDateTime;
 
+import lombok.Data;
+
+@Data
 public class RideRequestDto {
     private Long id;
-    private PointDto pickupLocation;
+    private PointDto pickUpLocation;
     private PointDto dropOffLocation;
     private LocalDateTime requestTime;
     private RiderDto rider;
     private PaymentMethod paymentMethod;
     private RideRequestStatus rideRequestStatus;
+    private Double fare;
 }

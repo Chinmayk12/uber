@@ -1,7 +1,9 @@
 package com.chinuthon.project.uber.uber.stategies;
 
 import com.chinuthon.project.uber.uber.dto.RideRequestDto;
+import com.chinuthon.project.uber.uber.entities.RideRequest;
 
 public interface RideFareCalculationStrategy {
-    double calculateFare(RideRequestDto rideRequestDto);
+    double RIDE_FARE_MULTIPLIER = 10;
+    double calculateFare(RideRequest rideRequest);
 }

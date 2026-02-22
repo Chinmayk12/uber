@@ -3,9 +3,10 @@ package com.chinuthon.project.uber.uber.entities;
 import com.chinuthon.project.uber.uber.entities.enums.PaymentMethod;
 import com.chinuthon.project.uber.uber.entities.enums.RideRequestStatus;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.geolatte.geom.Point;
+import org.locationtech.jts.geom.Point;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class RideRequest {
     private Long id;
 
     @Column(columnDefinition = "Geometry(Point, 4326)")
-    private Point pickupLocation;
+    private Point pickUpLocation;
 
     @Column(columnDefinition = "Geometry(Point, 4326)")
     private Point dropOffLocation;
@@ -37,5 +38,7 @@ public class RideRequest {
 
     @Enumerated(EnumType.STRING)
     private RideRequestStatus rideRequestStatus;
+
+    private Double fare;
 
 }
