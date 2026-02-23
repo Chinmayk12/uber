@@ -1,14 +1,14 @@
 package com.chinuthon.project.uber.uber.entities;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Entity
 @Getter
 @Setter
+@Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Rider {
 
     @Id

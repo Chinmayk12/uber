@@ -3,12 +3,17 @@ package com.chinuthon.project.uber.uber.entities;
 import com.chinuthon.project.uber.uber.entities.enums.TransactionMethod;
 import com.chinuthon.project.uber.uber.entities.enums.TransactionType;
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WalletTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

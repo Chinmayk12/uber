@@ -1,19 +1,20 @@
 package com.chinuthon.project.uber.uber.entities;
 
 import com.chinuthon.project.uber.uber.entities.enums.PaymentMethod;
-import com.chinuthon.project.uber.uber.entities.enums.RideRequestStatus;
 import com.chinuthon.project.uber.uber.entities.enums.RideStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.geolatte.geom.Point;
+import lombok.*;
+import org.locationtech.jts.geom.Point;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Ride {
 
     @Id
@@ -29,7 +30,8 @@ public class Ride {
     @CreationTimestamp
     private LocalDateTime createdTime;
 
-    // One User Can Make Multiple Ride Requests, But Each Ride Request is Made by One User
+    // One User Can Make Multiple Ride Requests, But Each Ride Request is Made by
+    // One User
     @ManyToOne(fetch = FetchType.LAZY)
     private Rider rider;
 

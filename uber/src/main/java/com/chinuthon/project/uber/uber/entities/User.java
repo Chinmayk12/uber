@@ -2,8 +2,7 @@ package com.chinuthon.project.uber.uber.entities;
 
 import com.chinuthon.project.uber.uber.entities.enums.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
@@ -11,6 +10,9 @@ import java.util.Set;
 @Table(name = "app_user")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -16,15 +16,15 @@ public class MapperConfig {
         ModelMapper modelMapper = new ModelMapper();
 
         // For to convert the PointDto to Point entity
-        modelMapper.typeMap(PointDto.class, Point.class).setConverter(context->{
-           PointDto pointDto = context.getSource();
-           return GeometryUtils.createPoint(pointDto);
+        modelMapper.typeMap(PointDto.class, Point.class).setConverter(context -> {
+            PointDto pointDto = context.getSource();
+            return GeometryUtils.createPoint(pointDto);
         });
 
         // For to convert the Point entity to PointDto
-        modelMapper.typeMap(Point.class,PointDto.class).setConverter(context ->{
+        modelMapper.typeMap(Point.class, PointDto.class).setConverter(context -> {
             Point point = context.getSource();
-            double[] pointCoordinates = new double[]{
+            double[] pointCoordinates = new double[] {
                     point.getY(),
                     point.getX()
             };

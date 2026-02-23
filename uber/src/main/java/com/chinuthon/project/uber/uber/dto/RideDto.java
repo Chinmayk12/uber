@@ -1,19 +1,21 @@
 package com.chinuthon.project.uber.uber.dto;
 
-import com.chinuthon.project.uber.uber.entities.Driver;
-import com.chinuthon.project.uber.uber.entities.Rider;
 import com.chinuthon.project.uber.uber.entities.enums.PaymentMethod;
 import com.chinuthon.project.uber.uber.entities.enums.RideStatus;
-import jakarta.persistence.*;
-import org.geolatte.geom.Point;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RideDto {
     private Long id;
-    private Point pickupLocation;
-    private Point dropOffLocation;
+    private PointDto pickupLocation;
+    private PointDto dropOffLocation;
 
     private LocalDateTime createdTime;
     private RiderDto rider;

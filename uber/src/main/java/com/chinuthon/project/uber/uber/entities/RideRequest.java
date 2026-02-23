@@ -3,17 +3,18 @@ package com.chinuthon.project.uber.uber.entities;
 import com.chinuthon.project.uber.uber.entities.enums.PaymentMethod;
 import com.chinuthon.project.uber.uber.entities.enums.RideRequestStatus;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.locationtech.jts.geom.Point;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RideRequest {
 
     @Id

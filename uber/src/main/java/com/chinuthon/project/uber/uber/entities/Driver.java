@@ -1,13 +1,15 @@
 package com.chinuthon.project.uber.uber.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.geolatte.geom.Point;
+import lombok.*;
+import org.locationtech.jts.geom.Point;
 
-@Entity
 @Getter
 @Setter
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

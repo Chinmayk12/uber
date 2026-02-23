@@ -1,10 +1,16 @@
 package com.chinuthon.project.uber.uber.entities;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Wallet {
 
     @Id

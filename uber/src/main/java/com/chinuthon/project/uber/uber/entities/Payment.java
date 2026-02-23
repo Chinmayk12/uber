@@ -3,11 +3,17 @@ package com.chinuthon.project.uber.uber.entities;
 import com.chinuthon.project.uber.uber.entities.enums.PaymentMethod;
 import com.chinuthon.project.uber.uber.entities.enums.PaymentStatus;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
