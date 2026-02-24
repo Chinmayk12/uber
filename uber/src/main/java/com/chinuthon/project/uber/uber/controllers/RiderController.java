@@ -18,4 +18,5 @@ public class RiderController {
     public RideRequestDto requestRide(@RequestBody RideRequestDto rideRequestDto) {
         return riderService.requestRide(rideRequestDto);
     }
+
 }

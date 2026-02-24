@@ -7,6 +7,7 @@ import com.chinuthon.project.uber.uber.entities.Driver;
 import com.chinuthon.project.uber.uber.entities.Ride;
 import com.chinuthon.project.uber.uber.entities.RideRequest;
 import com.chinuthon.project.uber.uber.entities.enums.RideRequestStatus;
+import com.chinuthon.project.uber.uber.entities.enums.RideStatus;
 import com.chinuthon.project.uber.uber.repositories.DriverRepository;
 import com.chinuthon.project.uber.uber.services.DriverService;
 import com.chinuthon.project.uber.uber.services.RideRequestService;
@@ -15,6 +16,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,8 +44,10 @@ public class DriverServiceImpl implements DriverService {
             throw new RuntimeException("Driver is not available to accept the ride request.");
         }
 
-        Ride ride = rideService.createNewRide(rideRequest, currentDriver);
+        currentDriver.setAvailable(false);
+        Driver savedDriver = driverRepository.save(currentDriver);
 
+        Ride ride = rideService.createNewRide(rideRequest, savedDriver);
         return modelMapper.map(ride, RideDto.class);
     }
 
@@ -52,9 +57,23 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public RideDto startRide(Long rideId) {
-        return null;
+    public RideDto startRide(Long rideId, String otp) {
+        Ride ride = rideService.getRideById(rideId);
+        Driver driver = getCurrentDriver();
+
+        if(!driver.equals(ride.getDriver())){
+            throw new RuntimeException("Driver cannot start ride");
+        }
+
+        if(!ride.getRideStatus().equals(RideStatus.CONFIRMED)){
+            throw new RuntimeException("Ride status is not CONFIRMED hence cannot be started,status : "
+                    +ride.getRideStatus());
+        }
+        ride.setStartTime(LocalDateTime.now());
+        Ride savedRide = rideService.updateRideStatus(ride,RideStatus.ONGOING);
+        return modelMapper.map(savedRide,RideDto.class);
     }
+
 
     @Override
     public RideDto endRide(Long rideId) {

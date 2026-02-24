@@ -6,6 +6,7 @@ import com.chinuthon.project.uber.uber.entities.Ride;
 import com.chinuthon.project.uber.uber.entities.RideRequest;
 import com.chinuthon.project.uber.uber.entities.enums.RideRequestStatus;
 import com.chinuthon.project.uber.uber.entities.enums.RideStatus;
+import com.chinuthon.project.uber.uber.exceptions.ResourceNotFoundException;
 import com.chinuthon.project.uber.uber.repositories.RideRepository;
 import com.chinuthon.project.uber.uber.services.RideRequestService;
 import com.chinuthon.project.uber.uber.services.RideService;
@@ -27,7 +28,8 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public Ride getRideById(Long rideId) {
-        return null;
+        return rideRepository.findById(rideId)
+                .orElseThrow(()-> new ResourceNotFoundException("Ride not found with this id : "+rideId));
     }
 
     @Override
@@ -50,8 +52,9 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Ride updateRideStatus(Long rideId, String status) {
-        return null;
+    public Ride updateRideStatus(Ride ride, RideStatus status) {
+        ride.setRideStatus(status);
+        return rideRepository.save(ride);
     }
 
     @Override

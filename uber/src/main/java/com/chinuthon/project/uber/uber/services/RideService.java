@@ -4,6 +4,7 @@ import com.chinuthon.project.uber.uber.dto.RideRequestDto;
 import com.chinuthon.project.uber.uber.entities.Driver;
 import com.chinuthon.project.uber.uber.entities.Ride;
 import com.chinuthon.project.uber.uber.entities.RideRequest;
+import com.chinuthon.project.uber.uber.entities.enums.RideStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -17,7 +18,7 @@ public interface RideService {
 
     Ride createNewRide(RideRequest rideRequest, Driver driver);
 
-    Ride updateRideStatus(Long rideId, String status);
+    Ride updateRideStatus(Ride ride, RideStatus status);
 
     Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest);
 
