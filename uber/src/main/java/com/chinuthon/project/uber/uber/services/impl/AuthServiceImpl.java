@@ -9,6 +9,7 @@ import com.chinuthon.project.uber.uber.exceptions.RuntimeConflictException;
 import com.chinuthon.project.uber.uber.repositories.UserRepository;
 import com.chinuthon.project.uber.uber.services.AuthService;
 import com.chinuthon.project.uber.uber.services.RiderService;
+import com.chinuthon.project.uber.uber.services.WalletService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,6 +24,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final RiderService riderService;
+    private final WalletService walletService;
 
     @Override
     public String login(String email, String password) {
@@ -46,8 +48,7 @@ public class AuthServiceImpl implements AuthService {
 
         // Create User Related Entities
         riderService.createNewRider(savedUser);
-
-        // TODO Add the wallet related servie here
+        walletService.createNewWallet(savedUser);
 
         return modelMapper.map(savedUser, UserDto.class);
     }

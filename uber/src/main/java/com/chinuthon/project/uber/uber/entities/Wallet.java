@@ -17,10 +17,10 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
     private User user;
 
-    private Double balance;
+    private Double balance = 0.0;
 
     // One Wallet Can Have Multiple Transactions, But Each Transaction is Associated with One Wallet
     @OneToMany(mappedBy = "wallet",fetch = FetchType.LAZY)

@@ -3,20 +3,23 @@ package com.chinuthon.project.uber.uber.services.impl;
 import com.chinuthon.project.uber.uber.dto.DriverDto;
 import com.chinuthon.project.uber.uber.dto.RideDto;
 import com.chinuthon.project.uber.uber.dto.RideRequestDto;
-import com.chinuthon.project.uber.uber.entities.Driver;
-import com.chinuthon.project.uber.uber.entities.RideRequest;
-import com.chinuthon.project.uber.uber.entities.Rider;
-import com.chinuthon.project.uber.uber.entities.User;
+import com.chinuthon.project.uber.uber.dto.RiderDto;
+import com.chinuthon.project.uber.uber.entities.*;
 import com.chinuthon.project.uber.uber.entities.enums.RideRequestStatus;
+import com.chinuthon.project.uber.uber.entities.enums.RideStatus;
 import com.chinuthon.project.uber.uber.exceptions.ResourceNotFoundException;
 import com.chinuthon.project.uber.uber.repositories.RideRequestRepository;
 import com.chinuthon.project.uber.uber.repositories.RiderRepository;
+import com.chinuthon.project.uber.uber.services.DriverService;
+import com.chinuthon.project.uber.uber.services.RideService;
 import com.chinuthon.project.uber.uber.services.RiderService;
 import com.chinuthon.project.uber.uber.stategies.RideStrategyManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +33,8 @@ public class RiderServiceImpl implements RiderService {
     private final RideRequestRepository rideRequestRepository;
     private final RiderRepository riderRepository;
     private final RideStrategyManager rideStrategyManager;  // To use the strategy manager for fare calculation and driver matching
+    private final RideService rideService;
+    private final DriverService driverService;
 
     @Override
     @Transactional
@@ -56,7 +61,21 @@ public class RiderServiceImpl implements RiderService {
 
     @Override
     public RideDto cancelRide(Long rideId) {
-        return null;
+        Rider rider = getCurrentRider();
+        Ride ride = rideService.getRideById(rideId);
+
+        if(!rider.equals(ride.getRider())){
+            throw new RuntimeException("Rider does not own this ride with id "+rideId);
+        }
+
+        if(!ride.getRideStatus().equals(RideStatus.CONFIRMED)){
+            throw new RuntimeException("Ride Cannot be cancelled,invalid status: "+ride.getRideStatus());
+        }
+
+        Ride savedRide = rideService.updateRideStatus(ride,RideStatus.CANCELLED);
+        driverService.updateDriverAvailability(ride.getDriver(),true);
+
+        return modelMapper.map(savedRide,RideDto.class);
     }
 
     @Override
@@ -65,13 +84,18 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
-    public DriverDto getMyProfile() {
-        return null;
+    public RiderDto getMyProfile() {
+        Rider currentRider = getCurrentRider();
+        return modelMapper.map(currentRider,RiderDto.class);
     }
 
     @Override
-    public List<RideDto> getAllMyRides() {
-        return List.of();
+    public Page<RideDto> getAllMyRides(PageRequest pageRequest) {
+        Rider currentRider = getCurrentRider();
+
+        return rideService.getAllRidesOfRider(currentRider,pageRequest).map(
+                ride -> modelMapper.map(ride,RideDto.class)
+        );
     }
 
     @Override

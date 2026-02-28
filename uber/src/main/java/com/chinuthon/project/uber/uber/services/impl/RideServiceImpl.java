@@ -4,6 +4,7 @@ import com.chinuthon.project.uber.uber.dto.RideRequestDto;
 import com.chinuthon.project.uber.uber.entities.Driver;
 import com.chinuthon.project.uber.uber.entities.Ride;
 import com.chinuthon.project.uber.uber.entities.RideRequest;
+import com.chinuthon.project.uber.uber.entities.Rider;
 import com.chinuthon.project.uber.uber.entities.enums.RideRequestStatus;
 import com.chinuthon.project.uber.uber.entities.enums.RideStatus;
 import com.chinuthon.project.uber.uber.exceptions.ResourceNotFoundException;
@@ -33,11 +34,6 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void matchWithDriver(RideRequestDto rideRequestDto) {
-
-    }
-
-    @Override
     public Ride createNewRide(RideRequest rideRequest, Driver driver) {
         rideRequest.setRideRequestStatus(RideRequestStatus.CONFIRM);
 
@@ -58,13 +54,13 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfRider(Rider rider, PageRequest pageRequest) {
+        return rideRepository.findByRider(rider,pageRequest);
     }
 
     @Override
-    public Page<Ride> getAllRidesOfDriver(Long driverId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfDriver(Driver driver, PageRequest pageRequest) {
+        return rideRepository.findByDriver(driver,pageRequest);
     }
 
     private String generateRandomOtp(){
