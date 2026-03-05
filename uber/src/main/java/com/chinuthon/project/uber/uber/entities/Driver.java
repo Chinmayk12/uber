@@ -10,6 +10,10 @@ import org.locationtech.jts.geom.Point;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+// Will help to query fast is someone is finding driver on vehicleId
+@Table(indexes = {
+    @Index(name = "idx_driver_vehicle_id",columnList = "vehicleId")
+})
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

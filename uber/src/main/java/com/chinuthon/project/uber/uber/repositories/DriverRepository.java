@@ -1,14 +1,18 @@
 package com.chinuthon.project.uber.uber.repositories;
 
 import com.chinuthon.project.uber.uber.entities.Driver;
+import com.chinuthon.project.uber.uber.entities.User;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface DriverRepository extends JpaRepository<Driver, Long> {
+
+    Optional<Driver> findByUser(User user);
 
     // ST_Distance(point1, point2) calculates the distance between two points
     // ST_DWithin(point1, point2, distance) checks if the distance between two

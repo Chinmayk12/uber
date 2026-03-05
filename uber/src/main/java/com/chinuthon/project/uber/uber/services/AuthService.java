@@ -5,7 +5,9 @@ import com.chinuthon.project.uber.uber.dto.SignupDto;
 import com.chinuthon.project.uber.uber.dto.UserDto;
 
 public interface AuthService {
-    String login(String email, String password);
+    String[] login(String email, String password);
     UserDto signup(SignupDto signupDto);
-    DriverDto onboardDriver(Long userId);
+    DriverDto onboardDriver(Long userId,String vehicleId);
+
+    String refreshToken(String refreshToken);
 }

@@ -11,6 +11,7 @@ import com.chinuthon.project.uber.uber.exceptions.ResourceNotFoundException;
 import com.chinuthon.project.uber.uber.repositories.RideRequestRepository;
 import com.chinuthon.project.uber.uber.repositories.RiderRepository;
 import com.chinuthon.project.uber.uber.services.DriverService;
+import com.chinuthon.project.uber.uber.services.RatingService;
 import com.chinuthon.project.uber.uber.services.RideService;
 import com.chinuthon.project.uber.uber.services.RiderService;
 import com.chinuthon.project.uber.uber.stategies.RideStrategyManager;
@@ -18,8 +19,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +38,7 @@ public class RiderServiceImpl implements RiderService {
     private final RideStrategyManager rideStrategyManager;  // To use the strategy manager for fare calculation and driver matching
     private final RideService rideService;
     private final DriverService driverService;
+    private final RatingService ratingService;
 
     @Override
     @Transactional
@@ -80,7 +84,18 @@ public class RiderServiceImpl implements RiderService {
 
     @Override
     public DriverDto rateDriver(Long rideId, Integer rating) {
-        return null;
+        Ride ride= rideService.getRideById(rideId);
+        Rider rider = getCurrentRider();
+
+        if(!rider.equals(ride.getRider())){
+            throw new RuntimeException("Rider is not the owner of this Ride");
+        }
+
+        if(!ride.getRideStatus().equals(RideStatus.ENDED)){
+            throw new RuntimeException("Ride status is not Ended hence cannot start rating,status :"+ride.getRideStatus());
+        }
+
+        return ratingService.rateDriver(ride,rating);
     }
 
     @Override
@@ -109,6 +124,9 @@ public class RiderServiceImpl implements RiderService {
 
     @Override
     public Rider getCurrentRider() {
-        return riderRepository.findById(1L).orElseThrow(()-> new ResourceNotFoundException("Rider not found with id "+1L));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return riderRepository.findByUser(user).orElseThrow(()->
+                new ResourceNotFoundException("Rider not associated with user with id "+user.getId()));
     }
 }
