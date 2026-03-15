@@ -1,0 +1,70 @@
+spring:
+  application:
+    name: uber
+
+  datasource:
+    url: jdbc:postgresql://uber-backend.cdasqgew0q9n.eu-north-1.rds.amazonaws.com:5432/gis
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  
+  sql:
+    init:
+      mode: never
+      data-locations: classpath:data.sql
+
+  # Spring AI Configuration
+  ai:
+    openai:
+      # Chat configuration (using Groq)
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
+      
+      # Embedding configuration (using Jina AI - FREE 1M tokens/month)
+      # Get your free API key from: https://jina.ai/embeddings/
+      # Using jina-embeddings-v5-text-small (latest, released 2026-02-18)
+      embedding:
+        enabled: true
+        api-key: ${JINA_API_KEY}
+        base-url: https://api.jina.ai/v1
+        options:
+          model: jina-embeddings-v5-text-small
+    
+    # Vector Store Configuration
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        dimensions: 1024  # jina-embeddings-v3 produces 1024-dimensional embeddings
+        distance-type: COSINE_DISTANCE
+    
+    # Chat Memory Configuration
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+            table-name: chat_memory
+
+  # Security configs
+  security:
+    user:
+      name: user
+      password: password
+
+jwt:
+  secretKey: jdisvndsivldiavdvalvjuaeivlnnnnnnnnaejvnanviwugnariwauuuuuvnnvsdijvavnjvnfwiefnawenwiovnpDVKJVNLASJKVNSDKNAEWIUNVVBidjsvnidsjvn
+
+logging:
+  level:
+    org.springframework.ai: DEBUG

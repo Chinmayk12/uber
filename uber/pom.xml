@@ -129,10 +129,10 @@
 			<artifactId>spring-ai-starter-model-openai</artifactId>
 		</dependency>
 
-		<!-- Spring AI - Ollama (for local embeddings) -->
+		<!-- HTTP Client for Hugging Face API -->
 		<dependency>
-			<groupId>org.springframework.ai</groupId>
-			<artifactId>spring-ai-starter-model-ollama</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 
 		<!-- Spring AI - PGVector for vector store -->
