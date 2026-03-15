@@ -78,17 +78,27 @@ public class RiderAiChatService {
         String userContext = String.format("User %s asked: %s", user.getName(), message);
         rideVectorService.storeConversationContext(conversationId, userId, userContext);
 
-        // Search vector store for relevant past context (RAG)
-        String retrievedContext = rideVectorService.searchRelevantContext(userId, message, 5);
+        // Only search vector store if user is asking about past data
+        // Don't retrieve for action commands (book, cancel, etc.)
+        String retrievedContext = "";
+        if (isHistoricalQuery(message)) {
+            retrievedContext = rideVectorService.searchRelevantContext(userId, message, 3);
+            log.info("Historical query detected - retrieved context");
+        } else {
+            log.info("Action command detected - skipping vector search");
+        }
         
-        // Build prompt with retrieved context
+        // Build prompt with retrieved context (only if relevant)
         String enhancedMessage = message;
         if (retrievedContext != null && !retrievedContext.isEmpty()) {
             enhancedMessage = String.format("""
-                    Context from your past interactions and rides:
+                    Relevant information from your past:
                     %s
                     
                     Current question: %s
+                    
+                    Note: Use the above context ONLY to answer questions about past rides. 
+                    For new actions (booking, canceling), use the tools directly without referencing past data.
                     """, retrievedContext, message);
             log.info("Enhanced message with {} chars of context", retrievedContext.length());
         }
@@ -106,6 +116,43 @@ public class RiderAiChatService {
 
         log.info("Rider AI Chat — response: {}", response);
         return response;
+    }
+
+    /**
+     * Determine if the message is asking about historical data
+     * vs performing a new action
+     */
+    private boolean isHistoricalQuery(String message) {
+        String lowerMessage = message.toLowerCase();
+        
+        // Historical query keywords
+        String[] historicalKeywords = {
+            "what", "when", "where", "which", "who", "how many", "how much",
+            "show me", "tell me", "list", "history", "past", "previous", 
+            "last", "yesterday", "ago", "before", "earlier", "did i", "have i",
+            "my rides", "my trips", "spent", "total", "average"
+        };
+        
+        // Action keywords (should NOT trigger vector search)
+        String[] actionKeywords = {
+            "book", "cancel", "start", "end", "accept", "rate", "check status"
+        };
+        
+        // If it's an action command, don't search vector store
+        for (String actionKeyword : actionKeywords) {
+            if (lowerMessage.contains(actionKeyword)) {
+                return false;
+            }
+        }
+        
+        // If it contains historical keywords, search vector store
+        for (String historicalKeyword : historicalKeywords) {
+            if (lowerMessage.contains(historicalKeyword)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public VectorStore getVectorStore() {
