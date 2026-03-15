@@ -3,9 +3,9 @@ spring:
     name: uber
 
   datasource:
-    url: jdbc:postgresql://uber-backend.cdasqgew0q9n.eu-north-1.rds.amazonaws.com:5432/gis
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${DB_HOST_URL}:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -63,8 +63,26 @@ spring:
       password: password
 
 jwt:
-  secretKey: jdisvndsivldiavdvalvjuaeivlnnnnnnnnaejvnanviwugnariwauuuuuvnnvsdijvavnjvnfwiefnawenwiovnpDVKJVNLASJKVNSDKNAEWIUNVVBidjsvnidsjvn
+  secretKey: ${JWT_SECRET_KEY}
 
 logging:
   level:
     org.springframework.ai: DEBUG
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
