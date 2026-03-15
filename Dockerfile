@@ -6,14 +6,14 @@ FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 
 # Copy Maven wrapper and pom.xml first for better caching
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
+COPY uber/.mvn/ .mvn/
+COPY uber/mvnw uber/pom.xml ./
 
 # Download dependencies (this layer will be cached if pom.xml doesn't change)
 RUN ./mvnw dependency:go-offline -B
 
 # Copy source code
-COPY src ./src
+COPY uber/src ./src
 
 # Build the application (skip tests for faster builds)
 RUN ./mvnw clean package -DskipTests
