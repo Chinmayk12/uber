@@ -143,4 +143,21 @@ public class DriverTools {
             return "Failed to get rides: " + e.getMessage();
         }
     }
+
+    @Tool(description = "Update the driver's availability status. Set to true to go online and accept rides, " +
+            "or false to go offline and stop receiving ride requests.")
+    public String updateAvailability(
+            @ToolParam(description = "Availability status: true to go online, false to go offline") Boolean available
+    ) {
+        try {
+            log.info("AI Tool: Updating driver availability to: {}", available);
+            DriverDto currentProfile = driverService.getMyProfile();
+            driverService.updateDriverAvailability(driverService.getCurrentDriver(), available);
+            return String.format("Availability updated successfully! You are now %s.", 
+                    available ? "ONLINE and ready to accept rides" : "OFFLINE");
+        } catch (Exception e) {
+            log.error("AI Tool: Error updating availability", e);
+            return "Failed to update availability: " + e.getMessage();
+        }
+    }
 }

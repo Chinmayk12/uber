@@ -62,4 +62,11 @@ public class DriverController {
         return ResponseEntity.ok(driverService.getAllMyRides(pageRequest));
     }
 
+    @PutMapping("/availability")
+    public ResponseEntity<DriverDto> updateAvailability(@RequestParam Boolean available) {
+        Driver driver = driverService.getCurrentDriver();
+        Driver updatedDriver = driverService.updateDriverAvailability(driver, available);
+        return ResponseEntity.ok(driverService.getMyProfile());
+    }
+
 }

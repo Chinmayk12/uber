@@ -24,23 +24,25 @@ public class DriverAiChatService {
             You are an intelligent Uber driver assistant. You help drivers manage their rides and earnings.
             
             Your capabilities:
-            1. **Accept ride requests** — Accept incoming ride requests by ride request ID.
+            1. **Update availability** — Set driver online (available=true) or offline (available=false).
             
-            2. **Start rides** — Start a ride using the ride request ID and OTP provided by the rider.
+            2. **Accept ride requests** — Accept incoming ride requests by ride request ID.
             
-            3. **End rides** — Complete a ride and process payment by ride ID.
+            3. **Start rides** — Start a ride using the ride request ID and OTP provided by the rider.
             
-            4. **Cancel rides** — Cancel a ride that hasn't been completed yet.
+            4. **End rides** — Complete a ride and process payment by ride ID.
             
-            5. **Rate riders** — Rate a rider (1-5 stars) after a completed ride.
+            5. **Cancel rides** — Cancel a ride that hasn't been completed yet.
             
-            6. **View profile** — Show the driver's profile including rating, vehicle, and availability.
+            6. **Rate riders** — Rate a rider (1-5 stars) after a completed ride.
             
-            7. **View ride history** — Show the driver's recent rides with earnings.
+            7. **View profile** — Show the driver's profile including rating, vehicle, and availability.
+            
+            8. **View ride history** — Show the driver's recent rides with earnings.
             
             Guidelines:
             - Be professional, helpful, and concise.
-            - Always confirm the action you're about to take before executing it.
+            - If a driver tries to accept a ride but is offline, suggest they go online first using updateAvailability.
             - When a ride is accepted, share the ride ID, OTP, and fare with the driver.
             - When starting a ride, verify the OTP matches what the rider provides.
             - When ending a ride, confirm the payment method and amount.
@@ -77,17 +79,27 @@ public class DriverAiChatService {
         String userContext = String.format("Driver %s asked: %s", user.getName(), message);
         rideVectorService.storeConversationContext(conversationId, userId, userContext);
 
-        // Search vector store for relevant past context (RAG)
-        String retrievedContext = rideVectorService.searchRelevantContext(userId, message, 5);
+        // Only search vector store if user is asking about past data
+        // Don't retrieve for action commands (accept, start, end, etc.)
+        String retrievedContext = "";
+        if (isHistoricalQuery(message)) {
+            retrievedContext = rideVectorService.searchRelevantContext(userId, message, 3);
+            log.info("Historical query detected - retrieved context");
+        } else {
+            log.info("Action command detected - skipping vector search");
+        }
         
-        // Build prompt with retrieved context
+        // Build prompt with retrieved context (only if relevant)
         String enhancedMessage = message;
         if (retrievedContext != null && !retrievedContext.isEmpty()) {
             enhancedMessage = String.format("""
-                    Context from your past interactions and rides:
+                    Relevant information from your past:
                     %s
                     
                     Current question: %s
+                    
+                    Note: Use the above context ONLY to answer questions about past rides. 
+                    For new actions (accepting, starting, ending rides), use the tools directly without referencing past data.
                     """, retrievedContext, message);
             log.info("Enhanced message with {} chars of context", retrievedContext.length());
         }
@@ -105,6 +117,43 @@ public class DriverAiChatService {
 
         log.info("Driver AI Chat — response: {}", response);
         return response;
+    }
+
+    /**
+     * Determine if the message is asking about historical data
+     * vs performing a new action
+     */
+    private boolean isHistoricalQuery(String message) {
+        String lowerMessage = message.toLowerCase();
+        
+        // Historical query keywords
+        String[] historicalKeywords = {
+            "what", "when", "where", "which", "who", "how many", "how much",
+            "show me", "tell me", "list", "history", "past", "previous", 
+            "last", "yesterday", "ago", "before", "earlier", "did i", "have i",
+            "my rides", "my trips", "earned", "total", "average", "earnings"
+        };
+        
+        // Action keywords (should NOT trigger vector search)
+        String[] actionKeywords = {
+            "accept", "start", "end", "cancel", "rate", "check status"
+        };
+        
+        // If it's an action command, don't search vector store
+        for (String actionKeyword : actionKeywords) {
+            if (lowerMessage.contains(actionKeyword)) {
+                return false;
+            }
+        }
+        
+        // If it contains historical keywords, search vector store
+        for (String historicalKeyword : historicalKeywords) {
+            if (lowerMessage.contains(historicalKeyword)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public VectorStore getVectorStore() {
