@@ -1,4 +1,4 @@
-# 🚀 NeuralRide AI - Intelligent Ride-Hailing Platform
+# 🚀 RideGPT AI - Intelligent Ride-Hailing Platform
 
 > **Next-Generation Ride Booking Powered by Spring AI, Vector Embeddings & Conversational Intelligence**
 
@@ -10,11 +10,11 @@
 
 ## 🧠 Overview
 
-**NeuralRide AI** is an enterprise-grade, AI-powered ride-hailing platform that revolutionizes the traditional ride-booking experience through advanced conversational AI, semantic search, and intelligent function calling. Built on **Spring AI**, this platform enables riders and drivers to interact naturally using AI assistants that understand context, remember conversations, and execute complex operations through natural language.
+**RideGPT AI** is an enterprise-grade, AI-powered ride-hailing platform that revolutionizes the traditional ride-booking experience through advanced conversational AI, semantic search, and intelligent function calling. Built on **Spring AI**, this platform enables riders and drivers to interact naturally using AI assistants that understand context, remember conversations, and execute complex operations through natural language.
 
 ### 🎯 What Makes This AI-Powered?
 
-Unlike traditional ride-booking apps with rigid UI flows, NeuralRide AI leverages:
+Unlike traditional ride-booking apps with rigid UI flows, RideGPT AI leverages:
 
 - **🤖 Conversational AI Agents** - Natural language interfaces for riders and drivers powered by Groq's LLaMA 3.3 70B
 - **🧠 Long-Term Memory** - Vector embeddings stored in PGVector enable semantic search across ride history
@@ -226,8 +226,8 @@ private boolean isHistoricalQuery(String message) {
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/neuralride-ai.git
-cd neuralride-ai
+git clone https://github.com/yourusername/RideGPT-ai.git
+cd RideGPT-ai
 ```
 
 ### 2. Setup PostgreSQL with PGVector
@@ -284,7 +284,7 @@ The application will start on `http://localhost:8080`
 
 ```bash
 # Build Docker image
-docker build -t neuralride-ai:latest .
+docker build -t RideGPT-ai:latest .
 
 # Run container
 docker run -p 8080:8080 \
@@ -295,7 +295,7 @@ docker run -p 8080:8080 \
   -e GROQ_API_KEY=your_groq_key \
   -e JINA_API_KEY=your_jina_key \
   -e JWT_SECRET_KEY=your_jwt_secret \
-  neuralride-ai:latest
+  RideGPT-ai:latest
 ```
 
 
